@@ -211,12 +211,15 @@ int patch_fstab(const char *filename, const char *filenamePatched, const char *f
         // replace partitions
         if(syspart==1) {
             if(!strcmp(PARTITION_SYSTEM, dev)) 
-                dev=PARTITION_SYSTEM1;
+                continue;
             else if(!strcmp(PARTITION_BOOT, dev))
                 dev=PARTITION_BOOT1;
             else if(!strcmp(PARTITION_MODEM, dev))
                 dev=PARTITION_MODEM1;
-        }
+        } else {
+	    if(!strcmp(PARTITION_SYSTEM1, dev))
+                continue;
+	    }
 
         // remove userdata
         if(!strcmp(PARTITION_USERDATA, dev))
@@ -291,7 +294,7 @@ int main(int argc, char **argv)
 
         if(mountScriptExists()) {
             char *e2fsck_argv[] = {
-                "/system/bin/mount_ext4.sh",
+                "/system/bin/mount_khaon_userdata.sh",
                 v->blk_device,
                 v->mount_point
             };
