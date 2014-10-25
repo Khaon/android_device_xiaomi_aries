@@ -28,6 +28,7 @@
 
 #define WAIT_TIMEOUT 5
 #define E2FSCK_BIN      "/system/bin/e2fsck"
+#define FSCK_F2FS_BIN   "/system/bin/fsck.f2fs"
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #define INFO(x...)    KLOG_INFO(LOG_TAG, x)
 #define ERROR(x...)   KLOG_ERROR(LOG_TAG, x)
@@ -123,8 +124,15 @@ void check_fs(char *blk_device, char *fs_type, char *target)
         blk_device
     };
 
+    char *fsck_f2fs_argv[] = {
+        FSCK_F2FS_BIN,
+        "-y",
+        blk_device
+    };
+
+
     /* Check for the types of filesystems we know how to check */
-    if (!strcmp(fs_type, "ext2") || !strcmp(fs_type, "ext3") || !strcmp(fs_type, "ext4")) {
+    if (!strcmp(fs_type, "ext2") || !strcmp(fs_type, "ext3") || !strcmp(fs_type, "ext4") || !strcmp(fs_type, "f2fs")) {
         /*
          * First try to mount and unmount the filesystem.  We do this because
          * the kernel is more efficient than e2fsck in running the journal and
@@ -143,15 +151,24 @@ void check_fs(char *blk_device, char *fs_type, char *target)
             umount(target);
         }
 
-        INFO("Running %s on %s\n", E2FSCK_BIN, blk_device);
-
-        ret = android_fork_execvp_ext(ARRAY_SIZE(e2fsck_argv), e2fsck_argv,
-                                      &status, true, LOG_KLOG, true, NULL);
-
-        if (ret < 0) {
-            /* No need to check for error in fork, we can't really handle it now */
-            ERROR("Failed trying to run %s\n", E2FSCK_BIN);
+        if (!strcmp(fs_type, "f2fs")) {
+            INFO("Running %s on %s\n", FSCK_F2FS_BIN, blk_device);
+            ret = android_fork_execvp_ext(ARRAY_SIZE(fsck_f2fs_argv), fsck_f2fs_argv,
+                                        &status, true, LOG_KLOG, true, NULL);
+            if (ret < 0) {
+                /* No need to check for error in fork, we can't really handle it now */
+                ERROR("Failed trying to run %s\n", FSCK_F2FS_BIN);
+            }
+        } else {
+            INFO("Running %s on %s\n", E2FSCK_BIN, blk_device);
+            ret = android_fork_execvp_ext(ARRAY_SIZE(e2fsck_argv), e2fsck_argv,
+                                        &status, true, LOG_KLOG, true, NULL);
+            if (ret < 0) {
+                /* No need to check for error in fork, we can't really handle it now */
+                ERROR("Failed trying to run %s\n", E2FSCK_BIN);
+            }
         }
+
     }
 
     return;
