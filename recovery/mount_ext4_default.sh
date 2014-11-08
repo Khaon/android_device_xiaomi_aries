@@ -13,9 +13,16 @@ if [ "${MOUNT_POINT}" == "/storage_int" ]; then
     LOG_FILE=${LOG_LOCATION}/storage_${TIMESTAMP}.log
 fi
 
+DATA=`/sbin/blkid /dev/block/mmcblk0p26 | grep "f2fs"`
+
 # mount partition
 if [ -e ${BLOCK_DEVICE} ]; then
-    mount -t ext4 -o nosuid,nodev,barrier=1,noauto_da_alloc ${BLOCK_DEVICE} ${MOUNT_POINT}
+	if [ "${DATA}" != "" ]; then
+		 mount -t f2fs -o rw,noatime,nosuid,nodev,discard,nodiratime,inline_xattr,inline_data,flush_merge ${BLOCK_DEVICE} ${MOUNT_POINT}
+	else
+		 mount -t ext4 -o noatime,nosuid,nodev,barrier=1,noauto_da_alloc ${BLOCK_DEVICE} ${MOUNT_POINT}
+	fi;
+
 fi
 
 NO_HIDE="$(getprop ro.keep.recovery.partition)"

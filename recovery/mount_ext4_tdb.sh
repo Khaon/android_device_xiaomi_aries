@@ -23,10 +23,22 @@ if [ "${MOUNT_POINT}" == "/storage_int" ]; then
     LOG_FILE=${LOG_LOCATION}/storage_${TIMESTAMP}.log
 fi
 
+# Determine userdata's fs type and set mount options accordingly
+BLOCK_NODE="$(busybox readlink -f ${BLOCK_DEVICE})"
+DATA=`/sbin/blkid ${BLOCK_NODE} | grep "f2fs"`
+if [ "${DATA}" != "" ]; then
+  FS_TYPE=f2fs
+  OPTS=rw,noatime,nosuid,nodev,discard,nodiratime,inline_xattr,inline_data,flush_merge
+else
+  FS_TYPE=ext4
+  OPTS=noatime,nosuid,nodev,barrier=1,noauto_da_alloc
+fi
+
 # mount partition
 if [ -e ${BLOCK_DEVICE} ]; then
     # userdata
     if [ "${BLOCK_DEVICE}" == "/dev/block/platform/msm_sdcc.1/by-name/userdata" ];then
+
         if [ "${SYSPART}" == "system" ];then
             BINDMOUNT_PATH="/data_root/system0"
         elif [ "${SYSPART}" == "system1" ];then
@@ -38,7 +50,7 @@ if [ -e ${BLOCK_DEVICE} ]; then
         # mount /data_root
         mkdir -p /data_root
         chmod 0755 /data_root
-        mount -t ext4 -o nosuid,nodev,barrier=1,noauto_da_alloc ${BLOCK_DEVICE} /data_root
+        mount -t ${FS_TYPE} -o ${OPTS} ${BLOCK_DEVICE} /data_root
 
         # bind mount
         mkdir -p ${BINDMOUNT_PATH}
@@ -47,7 +59,7 @@ if [ -e ${BLOCK_DEVICE} ]; then
 
     # normal mount
     else
-        mount -t ext4 -o nosuid,nodev,barrier=1,noauto_da_alloc ${BLOCK_DEVICE} ${MOUNT_POINT}
+        mount -t ${FS_TYPE} -o ${OPTS} ${BLOCK_DEVICE} ${MOUNT_POINT}
     fi
 fi
 
