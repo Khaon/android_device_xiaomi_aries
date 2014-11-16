@@ -217,6 +217,7 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
 	bdAddrLoader \
+	libbt-vendor \
 	libwcnss_qmi \
 	wcnss_service
 
