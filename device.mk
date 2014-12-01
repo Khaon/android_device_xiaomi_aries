@@ -234,7 +234,8 @@ PRODUCT_PACKAGES += \
 	power.aries
 
 PRODUCT_PACKAGES += \
-	syspart_select
+	syspart_select \
+	resize2fs_static
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 	rild.libpath=/system/lib/libril-qc-qmi-1.so

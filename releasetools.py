@@ -198,3 +198,11 @@ def trunc_to_null(s):
 
 #def FullOTA_PostBackup(info):
 #	info.script.AppendExtra('run_program("/sbin/syspart_select", "switch");');
+
+def FullOTA_PostValidate(info):
+	# run e2fsck
+	info.script.AppendExtra('run_program("/sbin/e2fsck", "-fy", "/dev/block/platform/msm_sdcc.1/by-name/system");');
+	# resize2fs: run and delete
+	info.script.AppendExtra('run_program("/tmp/install/bin/resize2fs_static", "/dev/block/platform/msm_sdcc.1/by-name/system");');
+	# run e2fsck
+	info.script.AppendExtra('run_program("/sbin/e2fsck", "-fy", "/dev/block/platform/msm_sdcc.1/by-name/system");');
