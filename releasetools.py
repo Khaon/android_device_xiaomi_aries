@@ -202,7 +202,6 @@ def trunc_to_null(s):
 def FullOTA_PostValidate(info):
 	# run e2fsck
 	info.script.AppendExtra('run_program("/sbin/e2fsck", "-fy", "/dev/block/platform/msm_sdcc.1/by-name/system");');
-	# resize2fs: run and delete
-	info.script.AppendExtra('run_program("/tmp/install/bin/resize2fs_static", "/dev/block/platform/msm_sdcc.1/by-name/system");');
-	# run e2fsck
-	info.script.AppendExtra('run_program("/sbin/e2fsck", "-fy", "/dev/block/platform/msm_sdcc.1/by-name/system");');
+	# resize2fs and e2fsck again
+	info.script.AppendExtra('run_program("/sbin/resize2fs", "/dev/block/platform/msm_sdcc.1/by-name/system");');
+	info.script.AppendExtra('run_program("e2fsck", "-fy", "/dev/block/platform/msm_sdcc.1/by-name/system");');
