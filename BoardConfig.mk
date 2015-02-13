@@ -26,8 +26,6 @@ TARGET_ARCH := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_CPU_VARIANT := krait
 
-TARGET_MPDECISION_BOOST_SOCKET := /dev/socket/mpdecision/touchboost
-
 TARGET_NO_BOOTLOADER := true
 
 BOARD_KERNEL_BASE := 0x80200000
@@ -57,8 +55,8 @@ TARGET_BOARD_INFO_FILE := device/xiaomi/aries/board-info.txt
 
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/xiaomi/aries/bluetooth
 
-# Use the CM PowerHAL
-TARGET_USES_CM_POWERHAL := true
+# Use the QCOM PowerHAL
+TARGET_POWERHAL_VARIANT := qcom
 
 # FIXME: HOSTAPD-derived wifi driver
 BOARD_HAS_QCOM_WLAN := true
