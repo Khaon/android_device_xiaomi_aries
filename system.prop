@@ -26,9 +26,9 @@ debug.mdpcomp.logs=0
 ro.sf.lcd_density=320
 
 # save modem ramdump to sdcard
-persist.radio.parsedump=1
-persist.radio.ramdump_sdcard=0
-persist.radio.ramdump_num=3
+#persist.radio.parsedump=1
+#persist.radio.ramdump_sdcard=0
+#persist.radio.ramdump_num=3
 
 #
 # system props for the cne module
